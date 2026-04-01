@@ -32,7 +32,7 @@
           }
         });
       },
-      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px 0px 0px' }
     );
 
     revealElements.forEach((el) => {
@@ -276,18 +276,18 @@
           if (type === 'title') {
             el.classList.add('editorial-reveal--visible');
           } else if (type === 'line') {
-            setTimeout(() => el.classList.add('editorial-reveal--visible'), 150);
+            setTimeout(() => el.classList.add('editorial-reveal--visible'), 40);
           } else if (type === 'intro') {
-            setTimeout(() => el.classList.add('editorial-reveal--visible'), 250);
+            setTimeout(() => el.classList.add('editorial-reveal--visible'), 80);
           } else if (type === 'card') {
             const index = parseInt(el.dataset.cardIndex) || 0;
-            setTimeout(() => el.classList.add('editorial-reveal--visible'), 350 + (index * 80));
+            setTimeout(() => el.classList.add('editorial-reveal--visible'), 120 + (index * 50));
           }
 
           editorialObserver.unobserve(el);
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px 0px 0px' }
     );
 
     editorialElements.forEach(el => editorialObserver.observe(el));
@@ -333,7 +333,7 @@
 
           const tile = entry.target;
           const index = parseInt(tile.dataset.tileIndex) || 0;
-          const delay = index * 120;
+          const delay = index * 60;
 
           setTimeout(() => {
             tile.classList.add('upcoming-reveal--visible');
@@ -355,14 +355,46 @@
           upcomingObserver.unobserve(tile);
         });
       },
-      { threshold: 0.15, rootMargin: '0px 0px -30px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px 0px 0px' }
     );
 
     tiles.forEach(tile => upcomingObserver.observe(tile));
   }
 
   // ══════════════════════════════════════
-  // 8.9 RIDER REVEAL SYSTEM
+  // 8.9 VISUALS REVEAL SYSTEM
+  // ══════════════════════════════════════
+  function initVisualsReveal() {
+    const visualElements = document.querySelectorAll('.visuals-reveal');
+
+    if (prefersReducedMotion) {
+      visualElements.forEach(el => el.classList.add('visuals-reveal--visible'));
+      return;
+    }
+
+    const visualsObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const el = entry.target;
+          const index = parseInt(el.dataset.visualIndex) || 0;
+          
+          setTimeout(() => {
+            el.classList.add('visuals-reveal--visible');
+          }, index * 60);
+
+          visualsObserver.unobserve(el);
+        });
+      },
+      { threshold: 0.05, rootMargin: '0px 0px 0px 0px' }
+    );
+
+    visualElements.forEach(el => visualsObserver.observe(el));
+  }
+
+  // ══════════════════════════════════════
+  // 8.10 RIDER REVEAL SYSTEM
   // ══════════════════════════════════════
   function initRiderReveal() {
     const riderElements = document.querySelectorAll('.rider-reveal');
@@ -383,22 +415,22 @@
           if (type === 'badge') {
             el.classList.add('rider-reveal--visible');
           } else if (type === 'title') {
-            setTimeout(() => el.classList.add('rider-reveal--visible'), 100);
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 40);
           } else if (type === 'line') {
-            setTimeout(() => el.classList.add('rider-reveal--visible'), 200);
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 80);
           } else if (type === 'intro') {
-            setTimeout(() => el.classList.add('rider-reveal--visible'), 300);
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 120);
           } else if (type === 'card') {
             const index = parseInt(el.dataset.riderIndex) || 0;
-            setTimeout(() => el.classList.add('rider-reveal--visible'), 400 + (index * 120));
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 160 + (index * 60));
           } else if (type === 'footer') {
-            setTimeout(() => el.classList.add('rider-reveal--visible'), 700);
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 360);
           }
 
           riderObserver.unobserve(el);
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.05, rootMargin: '0px 0px 0px 0px' }
     );
 
     riderElements.forEach(el => riderObserver.observe(el));
@@ -413,6 +445,7 @@
     initScrollReveal();
     initEditorialReveal();
     initUpcomingTiles();
+    initVisualsReveal();
     initRiderReveal();
     initHeaderScroll();
     initSmoothScroll();

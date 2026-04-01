@@ -402,15 +402,13 @@
 }
 
 .music__tracks {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
 }
 
 .music__tracks--grid {
-  display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
 }
 
 .music__tracks--grid .card--track {
@@ -636,39 +634,101 @@
 }
 
 /* ══════════════════════════════════════════
-   7.7 VISUALES
+   7.7 VISUALES — Editorial Gallery
    ══════════════════════════════════════════ */
 
-.visuals__featured {
-  text-align: center;
-}
-
-.visuals__featured img {
-  max-width: 500px;
-  width: 100%;
-  height: auto;
-  margin: 0 auto;
-  filter: grayscale(100%) contrast(1.1) brightness(0.9);
-  transition: filter 0.5s var(--ease-smooth), transform 0.5s var(--ease-smooth);
-  border-radius: 4px;
-  box-shadow: 20px 20px 0px var(--color-bg-tertiary);
-}
-
-.visuals__featured img:hover {
-  filter: grayscale(0%) contrast(1.05) brightness(0.95);
-  transform: scale(1.02);
-}
-
-/* Grid futuro (preparado pero comentado hasta tener 5 fotos):
-.visuals__grid {
+.visuals-gallery {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto auto;
-  gap: 4px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: clamp(8px, 1.2vw, 16px);
+  align-items: start;
 }
-.visuals__item:nth-child(1) { grid-column: 1 / 3; grid-row: 1 / 2; }
-.visuals__item:nth-child(2) { grid-column: 3 / 4; grid-row: 1 / 2; }
-*/
+
+.visuals-gallery__col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.2vw, 16px);
+}
+
+/* Offset columns for editorial asymmetry */
+.visuals-gallery__col--left {
+  padding-top: 0;
+}
+
+.visuals-gallery__col--center {
+  padding-top: clamp(40px, 8vw, 80px); /* Pushes middle column down exactly half an image on average */
+}
+
+.visuals-gallery__col--right {
+  padding-top: 0;
+}
+
+/* Gallery items */
+.visuals-gallery__item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  margin: 0;
+  line-height: 0;
+}
+
+.visuals-gallery__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition:
+    transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
+    filter 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+  filter: brightness(0.92) contrast(1.05);
+}
+
+.visuals-gallery__item:hover img {
+  transform: scale(1.04);
+  filter: brightness(1) contrast(1.08);
+}
+
+/* Subtle gradient overlay */
+.visuals-gallery__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 60%,
+    rgba(0, 0, 0, 0.25) 100%
+  );
+  pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.visuals-gallery__item:hover .visuals-gallery__overlay {
+  opacity: 0.4;
+}
+
+/* Hero item spans full column height */
+.visuals-gallery__item--hero {
+  flex: 1;
+}
+
+.visuals-gallery__item--hero img {
+  height: 100%;
+  min-height: 400px;
+}
+
+/* Reveal animation states */
+.visuals-reveal {
+  opacity: 0;
+  transform: translateY(20px) scale(0.97);
+  transition:
+    opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: opacity, transform;
+}
+
+.visuals-reveal--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
 
 /* ══════════════════════════════════════════
    7.8 RIDER TÉCNICO — Editorial Premium
@@ -1305,6 +1365,7 @@
   }
 
   /* Track Cards */
+  .music__tracks,
   .music__tracks--grid {
     grid-template-columns: 1fr;
   }
@@ -1312,20 +1373,109 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  .card--track .track__artwork--large {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-  }
+  .card--track .track__artwork--large,
   .card--track .track__artwork {
     width: 100%;
     height: auto;
     aspect-ratio: 1;
   }
 
+  /* Revert to compact horizontal layout for Etapa Anterior on Mobile */
+  .music__tracks--grid {
+    gap: 12px; /* Minimizar separación entre tarjetas */
+  }
+
+  .music__tracks--grid .card--track {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 16px; /* Drástica reducción de acolchado interno */
+  }
+  
+  .music__tracks--grid .track__artwork {
+    width: 68px;
+    height: 68px;
+    aspect-ratio: auto;
+    flex-shrink: 0;
+  }
+  
+  .music__tracks--grid .track__info {
+    gap: 2px; /* Muy compacto */
+    min-width: 0;
+  }
+
+  .music__tracks--grid .track__title {
+    font-size: 14px; /* Previene saltos de línea molestos */
+    line-height: 1.2;
+    white-space: nowrap; /* Fuerza forzosamente a una linea */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Si es muy largo pondrá "..." */
+  }
+
+  .music__tracks--grid .track__artist {
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .music__tracks--grid .track__badges {
+    padding-top: 6px;
+  }
+
+  .music__tracks--grid .platform-badge {
+    padding: 5px 10px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .music__tracks--grid .platform-badge svg {
+    width: 12px;
+    height: 12px;
+  }
+
   /* Events */
   .card--event {
     padding: 28px 24px;
+  }
+
+  /* Visuals Gallery Mobile Premium Carousel */
+  .visuals-gallery {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 24px;
+    gap: 16px;
+    padding: 16px 24px 40px 24px;
+    margin: 0 -24px; /* Romper el margen para swiping de borde a borde */
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .visuals-gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  .visuals-gallery__col {
+    display: contents; /* Desempaqueta las cajas col para que los items fluyan horizontalmente */
+  }
+
+  .visuals-gallery__item {
+    flex: 0 0 78vw; /* Muestra 1 item y revela sutilmente el siguiente */
+    height: 60vh;
+    max-height: 550px;
+    scroll-snap-align: center;
+    border-radius: 8px; /* Redondear ligeramente extra por UX móvil */
+  }
+
+  /* Anular delay y transición de reveal en móvil para scroll horizontal instantáneo */
+  .visuals-gallery__item.visuals-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 
   /* Rider */

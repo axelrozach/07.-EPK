@@ -336,3 +336,129 @@ Se sustituyó la cuadrícula (grid) de 6 imágenes de la cuenta de Instagram en 
 ### Archivos Modificados
 - `index.html` (Reemplazo del nodo `<div class="booking__ig-grid">` por la imagen, actualización de caché a `?v=fin25`).
 - `css/sections.css` (Se eliminaron las clases `.booking__ig-grid` y `.booking__ig-thumb`, agregando la estilística para la nueva clase `.booking__ig-screenshot`).
+
+---
+## 2026-04-01: Rediseño Editorial de Galería "Visuales"
+
+**Reportado en:** Comentarios del usuario
+
+### Reparación
+Se transformó la anticuada sección tipo "single image" de Visuales por una **Galería Editorial Asimétrica con estilo de mosaico**.
+- **Layout (*Grid*):** Se distribuyeron las 5 imágenes `.webp` provistas (relación de aspecto originada de 16:9 posadas en retrato) en 3 columnas. Se aplicó un *offset* asimétrico mediante márgenes internos (`padding-top`) específicos a cada columna (0px / 60px / 30px) para lograr esa presentación editorial de alta costura que rompe con la simetría básica.
+- **Micro-interacciones y Animación:** Cada imagen fue equipada con *hovers* (aumento sutil en la dimensionalidad `1.04%` de escala, incremento suave de brillo y contrastes).
+- **Control de Puesta en Escena (*JS*):** Se agregó un observer intersector `initVisualsReveal()` implementando entrada tipo cascada (*stagger*) con diferencia de `150ms`.
+- **Ecosistema Móvil:** Se garantizó que en pantallas <= 767px todo este diseño converja gentilmente a un `block` nativo (o *1fr* puro), quitando la asimetría ineficiente en celulares y mostrando una cómoda galería de cascada vertical pura.
+
+### Archivos Modificados
+- Carpeta `assets/images/` (Importación de las 5 fotos en extensión `.webp`).
+- `index.html` (Inserción del esqueleto HTML para `visuals-gallery`, sub-columnas y caché incrementado a `?v=fin26`).
+- `css/sections.css` (Implementación de módulos para `.visuals-gallery` regular y en *mobile breakpoints*, borrado de código y *overlays* antiguos).
+- `js/main.js` (Estructuración y vinculación de función JS controladora `initVisualsReveal()`).
+
+---
+## 2026-04-01: Evolución Galería "Visuales" (Patrón de Ladrillo/Honeycomb)
+
+**Reportado en:** Comentarios del usuario
+
+### Reparación
+Se integró una sexta imagen (`621A6627.webp`) a la galería editorial recién creada, optimizando el diseño para que las 6 imágenes generen una secuencia rítmica perfecta (*intercalada* o tipo ladrillo invertido). 
+- **Estructura HTML:** Se distribuyeron equitativamente 2 imágenes por columna (Izquierda, Centro, Derecha), eliminando el modificador que alteraba la longitud del antiguo final para homogeneizar el balance de pesos visuales.
+- **Micro-ajuste Relativo (CSS):** Se ajustó el *Offset* de la columna central de un padding variable de `60px` máximo, a un `clamp(40px, 8vw, 80px)`, lo cual empuja la columna de en medio hacia abajo exactamente la mitad de la altura perceptual promedio de una imagen, creando una retícula de ladrillo tridimensional espectacular en escritorio y tabletas.
+
+### Archivos Modificados
+- `assets/images/621A6627.webp` (Nueva imagen trasladada a ruta final).
+- `index.html` (Adhesión del 6to nodo `<figure>`, limpieza de atributos de asimetría singular y actualización de flag de caché local a `?v=fin27`).
+- `css/sections.css` (Ajuste del gap paramétrico en `.visuals-gallery__col--center`).
+
+---
+## 2026-04-01: UX Premium de "Visuales" para Mobile (Carrusel Magnético)
+
+**Reportado en:** Comentarios del usuario
+
+### Reparación
+Se optimizó radicalmente la experiencia del usuario en teléfonos móviles para la recién creada Galería Editorial de Visuales. Puesto que apilar 6 fotografías formato 16:9 vertical generaba un scroll infinito poco elegante, se rediseñó en favor de un sistema de exploración horizontal tipo App.
+- **Rompiendo la cuadrícula CSS (* display: contents *):** Se utilizó esta poderosa y poco convencional propiedad sobre las clases `.visuals-gallery__col` únicamente en vista *mobile*, lo cual obligó a las columnas a "desaparecer" estructuralmente y dejar a las fotos libres como hijos directos de la galería sin afectar el increíble diseño *honeycomb* de Desktop.
+- **Carrusel Magnético Nativo:** El nodo padre fue habilitado como un contenedor Flexbox horizontal con `scroll-snap-type`. No hizo falta inyectar JavaScript, evitando la ralentización de la memoria en teléfono.
+- **Exposición UX Premium:** Cada fotografía consume el `78vw` del celular en vez del 100%, dejando asomarse astutamente el 22% de la siguiente postal actuando visualmente como indicador intuitivo de existencia de un carrete deslizante ("swipe to see more"). Las imágenes se anclan (`snap-align: center`) siempre al centro garantizando legibilidad y simetría al soltar el dedo.
+- **Invisible Scrollbar:** Eliminadas las engorrosas barras de deslizado en Webkit (Safari/Chrome móvil) para limpiar por competo la UI.
+
+### Archivos Modificados
+- `css/sections.css` (Sobre-escrito completo del Media Query en `.visuals-gallery` sustituyendo el grid 1fr por overflow-x con scroll-snap).
+- `index.html` (Actualización de caché `?v=fin28`).
+
+---
+## 2026-04-01: Ajuste de Layout Móvil para Canciones de "Etapa Anterior"
+
+**Reportado en:** Comentarios del usuario
+
+### Reparación
+A pesar de que las canciones "Destacadas" funcionan muy bien utilizando el `100vw` de la pantalla móvil (como portadas visualmente grandes), la sección de "Etapa anterior" resultaba abrumadora bajo la misma regla de columna (`flex-direction: column`), exigiendo demasiado scroll vertical para atravesar los 3 remixes.
+- **Sobrescritura UI (Mobile):** Se separó e independizó el comportamiento móvil de los contenedores que viven estrictamente dentro de `.music__tracks--grid`. Siendo así, se aplicó un *override* obligando al contenedor de cada Remix a respetar su naturaleza horizontal nativa (`flex-direction: row`).
+- **Dimensión Fotográfica:** La dimensión de los *artworks* fue reducida drásticamente a un contundente `72x72px` a la izquierda de la tarjeta, permitiendo que la información (título, artista, botón de plataforma) gane legibilidad al lado derecho y que los 3 recuadros juntos quepan en **una sola pantalla** del teléfono, mejorando el escaneo visual rápido.
+
+### Archivos Modificados
+- `css/sections.css` (Implementación de sobre-escritura flex-row y constraints de 72px en media queries para la malla de *tracks* secundarios).
+- `index.html` (Actualización de flag de caché a `?v=fin29`).
+
+---
+## 2026-04-01: Ajuste de Texto Interno y Pad en Tarjetas "Etapa Anterior" Mobile
+
+**Reportado en:** Comentarios del usuario (Revisión de captura de pantalla)
+
+### Reparación
+Resolución de un problema de legibilidad e interfaz visual en las tarjetas de la sección "Etapa anterior" para móviles (vista horizontal compacta). El relleno genérico heredado resultaba excesivo (esparciéndose sobre la pantalla), y la fuente ocasionaba saltos de línea inestéticos al colisionar con el margen de la tarjeta.
+- **Micro-Padding y Gaps:** Se ajustó el acolchado de `.card--track` dentro de la etapa anterior de un genérico `28px` a un cerrado y eficiente `16px`, quitando el desperdicio de espacio vertical vacío superior e inferior. Adicionalmente, se minimizó la distancia en `gap` interno del bloque de título/artista a `2px`.
+- **Prevalencia de una sola línea (*Truncate UI*):** Se inyectaron reglas estrictas de control tipográfico (`white-space: nowrap`, `overflow: hidden`, `text-overflow: ellipsis`) bajando el tamaño de fuente un par de píxeles (`14px` el título y `12px` el de los autores). Esto garantiza que, si un nombre de remix es inmensamente largo en un celular muy angosto, la plataforma inserte estéticamente "..." al final en lugar de romper torpemente hacia un segundo renglón, conservando las proporciones compactas.
+- **Compatibilidad Extrema:** Se activó la propiedad mandatoria en flexboxes `min-width: 0` al contenedor de texto para garantizar a que Safari/Chrome respeten la constricción de los campos textuales internos y no exploten la carta horizontalmente.
+- Asimismo, la tarjeta quedó lo suficientemente estrecha como para permitir la visualización del bloque superior de título de sección y descripción narrativa de una tirada.
+
+### Archivos Modificados
+- `css/sections.css` (Profundización de estilización en `@media (max-width: 767px)` para `.music__tracks--grid .card--track`).
+- `index.html` (Limpieza de caché general elevada a `?v=fin30`).
+
+---
+## 2026-04-01: Anulación de Latencia (*Reveal Delay*) en Carrusel "Visuales"
+
+**Reportado en:** Comentarios del usuario
+
+### Reparación
+Problema detectado: La animación en cascada (`IntersectionObserver` de JS) calculaba la entrada de cada imagen al *Viewport* y le impartía un retraso estilístico para verse bien cuando se hacía "scroll" bajando en Desktop. Sin embargo, en celular, como el flujo es un carrusel que se desliza horizontalmente y a alta velocidad (App feel), la latencia entorpecía la fluidez en la lectura fotográfica.
+- **Bypass Directo por CSS:** Añadidas reglas con flag `!important` que obligan a anular (`opacity: 1`, `transform: none`, `transition: none`) única y exclusivamente a `visuals-gallery__item.visuals-reveal` cuando está por debajo de los 767px de resulución móvil. 
+- **Resultado:** Ahora las 6 fotografías nacen completamente renderizadas e inmediatas en la fila oculta de desborde del contenedor horizontal, lo que permite pasar el dedo velozmente ("swipe") sin parpadeos, opacidades o cuellos de botella por carga retardada, recuperando la calidad premium e instantánea exigida para celular.
+
+### Archivos Modificados
+- `css/sections.css` (Inyección de reglas bloqueadoras de latencia para `.visuals-reveal` en mobile).
+- `index.html` (Caché elevado a `?v=fin31`).
+
+---
+## 2026-04-01: Layout de "Destacados" a 2 Columnas (Desktop)
+
+**Reportado en:** Comentarios del usuario
+
+### Reparación
+Buscando optimizar la pantalla completa en vista de Escritorio (Desktop) y evitar un desglose hiper-extenso de elementos hacia abajo (frecuente en estructuras verticales y que obligaba al usuario a descender ("scroll") demasiado para abarcar la sección principal de Música), se comprimió el bloque de "Destacados".
+- **Estructura Side-by-Side:** El contenedor padre `.music__tracks` fue modificado mediante el uso de `display: grid` con `grid-template-columns: repeat(2, 1fr)`. Esto forza a las dos referencias principales ("Overtaking" y "Break My Heart") a co-existir de forma matemáticamente exacta y horizontal.
+- **Flujo Interno Intacto:** Ya que las tarjetas continúan operando internamente mediante Flexbox horizontal, al encuestionarse dentro de una rejilla reducida por la mitad, simplemente se acoplan herméticamente sin mutilar el espacio para portadas ("artworks"), títulos o botones musicales, creando un aprovechamiento visual completo de la pantalla.
+- **Independencia Responsiva:** Se inyectó una re-definición de fallback estricta a `1fr` dentro de la *Media Query* de móvil para asegurar que este comportamiento "Side-by-Side" ocurra única y preclaramente bajo el entorno de computadoras, preservando las columnas unitarias en el teléfono.
+
+### Archivos Modificados
+- `css/sections.css` (Conversión formal del `flex-direction: column` a `display: grid` para `.music__tracks`, junto a reversiones móviles).
+- `index.html` (Caché elevado a `?v=fin32`).
+
+---
+## 2026-04-01: Aceleración Extrema de Scroll Reveals (Intersection Observers)
+
+**Reportado en:** Comentarios del usuario ("Tardan mucho en aparecer... en especial cuando bajo muy rápido")
+
+### Reparación
+El problema radicaba en la configuración original de los `IntersectionObserver` en JavaScript y los staggers (`setTimeout`), orquestada para descensos lentos y poéticos, pero completamente incompatibles con el paso rápido de un lector moderno (haciendo que los elementos "nacieran" visualmente cuando ya la pantalla iba por la mitad y se perdieran instantes valiosos dejándola momentáneamente vacía).
+
+- **Umbres (*Thresholds*):** Ajustados de `0.15` y `0.10` a **`0.05`**. Esto significa que JavaScript ya no exige que el 15% del elemento esté dentro de la pantalla para encender la mecha de la animación; basta con que un miserable 5% del borde cruce el umbral y ya arranca.
+- **Márgenes Fotográficos (*rootMargin*):** Los márgenes negativos (ej: `-40px` o `-50px`), que forzaban a la animación a esperar que el scroll subiera adicionalmente esa cantidad de píxeles *después* de asomarse, fueron eliminados a un plano y duro `0px 0px 0px 0px`. Ahora el encendido ocurre milimétricamente en cuanto asoman la nariz por debajo.
+- **Compresión de Cascada (*Stagger Timing*):** Los intervalos entre elementos en lista ("staggering") que generaban retrasos matemáticos masivos (ej: `400ms + index * 120` acumulando hasta un segundo de pantalla vacía), fueron destripados a intervalos hiper-ligeros (ej: demoras base de `40ms`, sumatorias de solo `50ms` por hijo). 
+- **Rapidez CSS (Global):** El token maestro de CSS transparente `--duration-slow` escaló de `0.6s` de eternidad a un snappy `0.45s` para ejecutar la transición más rápido al recibir la orden.
+
+### Archivos Modificados
+- `js/main.js` (Re-parametrización exhaustiva de 4 Observers y acortamiento drástico de sumatorias de tiempos `setTimeout`).
+- `css/design-tokens.css` (Corte de `--duration-slow` a 450 milisegundos).
+- `index.html` (Caché elevado a `?v=fin33`).
