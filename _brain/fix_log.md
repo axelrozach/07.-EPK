@@ -171,7 +171,168 @@ El "zoom in" indeseado en móviles al iniciar el scroll era ocasionado indirecta
   1. *Inicio:* La imagen vuelve a cargar por defecto en ese tamaño ampliado inicial (`1.15`).
   2. *Acción de Scroll Zoom-In:* Se eliminó la dependencia de `requestAnimationFrame` que los navegadores móviles (Safari) **congelaban y abortaban al deslizar rápido** provocando que la imagen se viera estática. 
   3. Ejecución Directa: Ahora la fórmula se ejecuta de manera sincrónica y violenta forzando a la GPU con `scale3d` `translateZ` a escalar la imagen ininterrumpidamente hasta su tamaño colosal `1.35` sin dar lugar al iOS a pausarlo.
+- **Jerarquía Visual en Desktop:** Se revirtió el test visual de colocar "DJ / Productor" por encima del logo a petición del usuario; se ha restaurado la versión definitiva donde el Rol acompaña visualmente por debajo al Logo principal en todas las resoluciones.
+- **Evolución Tipográfica:** Se reemplazó el paquete tipográfico para escalar la elegancia.
+  1. *Prata:* Implementada `Prata` para todos los titulares (H1-H4, tagline). Se eliminó por completo el estilo cursiva (`italic`) de todas las secciones para mantener un aspecto moderno y directo. Se ajustaron las escalas matemáticas `clamp` al alza para garantizar que los títulos sean grandes y perfectamente legibles en móviles y desktop.
+  2. *Space Grotesk:* Implementada como la tipografía para los *Textos Secundarios* (botones, meta-datos de canciones, fechas, roles y locaciones); elevando el aspecto puramente "Editorial", brindando un respiro de lectura muy moderno.
+  3. *Inter:* Mantenida para los bloques grandes de párrafo. Se incrementó matemáticamente el límite inferior y superior del tamaño de fuente (`--text-body`) para asegurar legibilidad suprema del texto base en todos los dispositivos de visualización.
 
 ### Archivos Modificados
-- `index.html` (Nuevas llaves ?v=fin6 forzando el reseteo)
-- `js/main.js` (Ecuación Zoom In mobile, early return Desktop, interpolación progresiva del sticky Header)
+- `index.html` (Remoción de foto en Bio, limpieza de DOM, nuevas llaves ?v=fin15 forzando reseteo).
+- `css/sections.css` (Reestructuración layout Bio: flex-column, text-center global, text-left para mobile).
+- `css/design-tokens.css` (Tallas de párrafo calibradas al alza).
+
+---
+## 2026-04-01: Sección Línea Musical — Editorial Gallery + Motion Premium
+
+**Reportado en:** Solicitud del usuario
+
+### Implementación
+- **Editorial Gallery Redesign:** Se reconstruyó completamente la sección "Línea Musical" como una **galería editorial** con experiencia tipo exhibición.
+- **Hero Editorial:** El título "LÍNEA MUSICAL" ahora aparece en tamaño `--text-display` con `letter-spacing: 0.2em` y una línea divisoria con micro-brillo gradiente (warm-gray → white → warm-gray).
+- **Grid Asimétrico:** Se implementó un CSS Grid asimétrico con:
+  - Card 01 (GÉNEROS): columna izquierda, expandida verticalmente en 2 filas.
+  - Cards 02 + 03 (ENFOQUE, CONSTRUCCIÓN): columna derecha, apiladas.
+  - Card 04 (IDEAL PARA): fila completa horizontal inferior.
+- **Cards de Lujo:** Cada card tiene:
+  - Número enorme (3.5–5.5rem) posicionado absolutamente con `opacity: 0.04` como detalle de fondo.
+  - Borde mínimo (6% opacidad) con sombra interna imperceptible.
+  - Hover que sube la opacidad del borde a 12%, añade sombra externa y desplaza el número 3px (micro-movement).
+- **Sistema de Animación Editorial (JS):** Se creó `initEditorialReveal()` con `IntersectionObserver` dedicado:
+  1. Título: opacity + blur(8px→0) en 1s.
+  2. Línea: scaleX(0→1) tras 300ms.
+  3. Intro: opacity + translateY(12px→0) tras 550ms.
+  4. Cards: cascada stagger de 100ms (750ms, 850ms, 950ms, 1050ms).
+- **Accesibilidad:** Se respeta `prefers-reduced-motion` tanto en CSS como en JS.
+- **Mobile:** Grid colapsa a una columna, tracking del título se reduce para legibilidad.
+
+### Archivos Modificados
+- `index.html` (HTML reestructurado con clases editorial-*, data attributes para animaciones).
+- `css/sections.css` (~160 líneas nuevas: grid asimétrico, card styling, sistema editorial-reveal).
+- `js/main.js` (Nueva función `initEditorialReveal()` con observer independiente y stagger secuencial).
+
+---
+## 2026-04-01: Ajustes de Contenido en Sección Música
+
+**Reportado en:** Solicitud del usuario
+
+### Implementación
+- Eliminados todos los elementos `<span class="track__year">` (fechas de publicación como 2024, 2020, 2019) de las canciones en la sección "Música" para limpiar la lectura de los tracks.
+- Renombrado de "Break My Heart – Dua Lipa (Bootleg Remix)" a "Break My Heart – Dua Lipa (Remix)" a petición explícita.
+- Limpieza de CSS: Eliminada la regla `.track__year` en `css/sections.css` al volverse obsoleta.
+
+### Archivos Modificados
+- `index.html` (Remoción de spans, renombramiento, cache bust `?v=fin16`).
+- `css/sections.css` (Remoción de clase `.track__year`).
+
+---
+## 2026-04-01: Layout Grid Horizontal para 'Etapa Anterior'
+
+**Reportado en:** Solicitud del usuario
+
+### Implementación
+- Modificación de layout exclusivamente para el subbloque "Etapa anterior" en pantallas Desktop.
+- Creada clase modificadora `.music__tracks--grid` (CSS Grid, 3 columnas) aplicada en `index.html`.
+- Forzado alineamiento vertical (`flex-column`) interno de las tarjetas dentro de este grid (imagen centrada/expansiva arriba, título e info apilados abajo).
+- Preservado comportamiento móvil en `@media (max-width: 767px)` colapsando el grid a una sola columna para no romper la versión mobile.
+
+### Archivos Modificados
+- `index.html` (Inclusión de la clase modificadora al contenedor, cache bust `?v=fin17`).
+- `css/sections.css` (Reglas desktop y overrides mobile para `.music__tracks--grid`).
+
+---
+## 2026-04-01: Desglose de Artistas y Renombramiento a (Axl Lake Remix)
+
+**Reportado en:** Solicitud del usuario
+
+### Implementación
+- Se separaron los artistas de los títulos en las canciones, moviendo los nombres de los artistas a un nuevo tag `<span class="track__artist">` por debajo del título.
+- Se implementó estilo para `.track__artist` con `var(--font-body)` y tamaño `var(--text-small)`, con `font-weight: 300` para mostrarse más liviano y elegante como se pide en los estándares de la industria musical.
+- Se actualizaron todos los remixes para mostrar expresamente "Axl Lake Remix" en su respectivo título (ej. "Break My Heart (Axl Lake Remix)", "Te Amo (Axl Lake Remix)").
+
+### Archivos Modificados
+- `index.html` (Estructuración de `<span class="track__artist">`, renombre de títulos a Axl Lake Remix, cache bust a `?v=fin20`).
+- `css/sections.css` (Añadido block css para `.track__artist`).
+
+---
+## 2026-04-01: Próximos Lanzamientos — Stat Tiles con Count-Up
+
+**Reportado en:** Solicitud del usuario
+
+### Implementación
+- **Reemplazo completo:** Los 7 placeholders individuales fueron eliminados y reemplazados por 3 tiles estadísticos que comunican el desglose por tipo: 3 Originales, 2 Colaboraciones, 2 Remixes.
+- **Estructura de cada tile:**
+  1. Número grande en Prata (3rem–4.5rem) con count-up animado.
+  2. Label uppercase en Space Grotesk con letter-spacing amplio.
+  3. Progress bar minimal (2px, gradiente warm-gray→white) que se dibuja al entrar.
+  4. Fracción "X / 7" como indicador secundario.
+- **Motion (scroll-trigger, `initUpcomingTiles()`):**
+  - Cards entran en cascada con stagger de 120ms, `y:10→0, opacity 0→1`.
+  - Count-up de 0→target en 1100ms con `easeOutCubic`.
+  - Bar fill se anima 200ms después del reveal del tile vía CSS transition (1.2s `easeOutExpo`).
+- **Hover premium:** `translateY(-2px)`, borde sube a 12% opacidad, sombra 8px/32px, bar-fill sube `brightness(1.15)`.
+- **Responsive:** Desktop 3 columnas, mobile stack 1 columna.
+- **Accesibilidad:** `prefers-reduced-motion` desactiva todas las animaciones y muestra valores finales instantáneamente.
+
+### Archivos Modificados
+- `index.html` (HTML reestructurado con `.upcoming-tiles`, `data-count-to`, `data-fill-to`, cache bust `?v=fin21`).
+- `css/sections.css` (~100 líneas: tile styling, bar, reveal states, responsive, reduced-motion).
+- `js/main.js` (Nueva función `initUpcomingTiles()` con count-up easeOutCubic y observer).
+
+---
+## 2026-04-01: Optimización de Tiempos de Animación - Línea Musical
+
+**Reportado en:** Problema de UX (Scroll rápido sobrepasaba el revelado tardío) por el usuario.
+
+### Implementación
+- Se redujeron de manera considerable los tiempos de revelado (delay) y transición (duration) en la sección "Línea Musical" para que el usuario no sobrepase la sección antes de que el contenido sea visible.
+- **Tiempos de JS (Timeouts en observer):**
+  - Línea: 300ms → 150ms
+  - Intro: 550ms → 250ms
+  - Inicio de Cascada de Cards: 750ms → 350ms
+  - Stagger entre cards: 100ms → 80ms
+- **Tiempos de CSS (Transition durations):**
+  - Título (blur/opacity): 1s → 0.6s
+  - Línea (scaleX): 0.9s → 0.5s
+  - Intro (translate/opacity): 0.9s → 0.5s
+  - Cards (translate/opacity): 0.7s → 0.4s
+
+### Archivos Modificados
+- `css/sections.css` (Reducción en tiempos de transición en clases `.editorial-reveal`).
+- `js/main.js` (Disminución drástica de los `setTimeout` de demora en `initEditorialReveal()`).
+- `index.html` (Cache bust actualizado a `?v=fin22`).
+
+---
+## 2026-04-01: Ajuste de Redundancia en "Material de Prensa"
+
+**Reportado en:** Comentarios del usuario
+
+### Reparación
+Se eliminó el titular `<h3>` que decía "Material de Prensa de Axl Lake" ya que la sub-sección resultaba redundante al estar inmediatamente debajo del header general de sección `"Material de Prensa"`. Ahora, los elementos fluyen naturalmente del header directo al botón de visualización/descarga de Google Drive.
+
+### Archivos Modificados
+- `index.html` (Eliminación de nodo `.press__subtitle`, actualización de caché `?v=fin23`).
+
+---
+## 2026-04-01: Ajuste de Tamaño de Titular "Booking"
+
+**Reportado en:** Comentarios del usuario
+
+### Reparación
+Se redujo el tamaño de la fuente (`font-size`) y se ajustó el espaciado de letras (`letter-spacing`) de la clase `.booking__heading` para igualarlo exactamente a los parámetros usados en `.section__title` (el resto de las secciones). Pasó de usar `--text-display` a `--text-h1` para evitar llamar la atención desproporcionadamente en medio de la estructura del *grid*, resultando en un diseño de lectura mucho más equitativo.
+
+### Archivos Modificados
+- `css/sections.css` (Cambio de variables y *tracking* en `.booking__heading`).
+- `index.html` (Actualización de caché `?v=fin24`).
+
+---
+## 2026-04-01: Reemplazo de Grid de Instagram por Captura Realista
+
+**Reportado en:** Comentarios del usuario
+
+### Reparación
+Se sustituyó la cuadrícula (grid) de 6 imágenes de la cuenta de Instagram en la sección de "Booking", reemplazándola por una imagen única (`feed-ig-axl-lake.png` proveniente de la carpeta "Material") que simula una captura real del Feed de Instagram. Esto proporciona una apariencia significativamente más realista y mejora la percepción visual del usuario.
+
+### Archivos Modificados
+- `index.html` (Reemplazo del nodo `<div class="booking__ig-grid">` por la imagen, actualización de caché a `?v=fin25`).
+- `css/sections.css` (Se eliminaron las clases `.booking__ig-grid` y `.booking__ig-thumb`, agregando la estilística para la nueva clase `.booking__ig-screenshot`).

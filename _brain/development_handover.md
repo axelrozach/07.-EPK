@@ -62,3 +62,35 @@ Implementación completa de la landing page estática single-page para Axl Lake 
 4. Verificar header backdrop-blur al scroll
 5. Verificar links externos (Spotify, SoundCloud, etc.)
 6. Verificar responsive en mobile (375px)
+
+---
+
+## 2026-04-01: Rediseño Premium del Rider Técnico
+
+**Estado:** ✅ COMPLETADO
+
+### Resumen
+Rediseño completo de la sección "Rider Técnico" que pasó de un layout básico con 2 cards planas y texto simple a un diseño editorial premium alineado con el nivel visual del resto del EPK (similar a la sección Línea Musical).
+
+### Componentes Modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `index.html` | Líneas 368-467: HTML completamente nuevo con header editorial (badge USB·PIONEER, título con blur reveal, línea gradiente, intro expandida), 2 rider-cards con números luxury, ítems con íconos SVG, dividers, y footer estilizado |
+| `css/sections.css` | Sección 7.8 reescrita (~290 líneas): estilos premium para header, badge, cards, glow effect, números luxury, ítems con iconos, dividers, footer, y sistema completo de animaciones rider-reveal (hidden + visible states) |
+| `css/sections.css` | Media query mobile: actualizado `.rider__cards` y `.rider-card__number` responsive |
+| `css/sections.css` | Reduced motion: reglas para `.rider-reveal` |
+| `js/main.js` | Nueva función `initRiderReveal()` con IntersectionObserver y delays secuenciales (badge→title→line→intro→cards→footer) |
+
+### Detalles Técnicos
+- **Sistema de animaciones:** `rider-reveal` con data-attributes (`data-rider="badge|title|line|intro|card|footer"`) y delays escalonados (0ms → 700ms)
+- **Efectos premium:** Blur reveal en título, scaleX en línea decorativa, glow line en hover de card ideal, números luxury semitransparentes con desplazamiento en hover
+- **Íconos:** SVG inline (stroke-based) representando CDJ (círculos), mixer (faders), y controlador all-in-one
+- **Grid asimétrico:** 1.2fr / 0.8fr para dar prioridad visual al Setup Ideal
+- **Accesibilidad:** `prefers-reduced-motion` desactiva todas las animaciones
+
+### Validación
+1. Navegar a `#rider` y verificar animaciones secuenciales
+2. Hover en cards → glow line superior + números se desplazan + íconos cambian de color
+3. Mobile → cards apiladas en 1 columna
+

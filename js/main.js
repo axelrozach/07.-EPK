@@ -255,12 +255,165 @@
   }
 
   // ══════════════════════════════════════
+  // 8.7 EDITORIAL REVEAL SYSTEM (Línea Musical)
+  // ══════════════════════════════════════
+  function initEditorialReveal() {
+    const editorialElements = document.querySelectorAll('.editorial-reveal');
+
+    if (prefersReducedMotion) {
+      editorialElements.forEach(el => el.classList.add('editorial-reveal--visible'));
+      return;
+    }
+
+    const editorialObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const el = entry.target;
+          const type = el.dataset.editorial;
+
+          if (type === 'title') {
+            el.classList.add('editorial-reveal--visible');
+          } else if (type === 'line') {
+            setTimeout(() => el.classList.add('editorial-reveal--visible'), 150);
+          } else if (type === 'intro') {
+            setTimeout(() => el.classList.add('editorial-reveal--visible'), 250);
+          } else if (type === 'card') {
+            const index = parseInt(el.dataset.cardIndex) || 0;
+            setTimeout(() => el.classList.add('editorial-reveal--visible'), 350 + (index * 80));
+          }
+
+          editorialObserver.unobserve(el);
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    editorialElements.forEach(el => editorialObserver.observe(el));
+  }
+
+  // ══════════════════════════════════════
+  // 8.8 UPCOMING TILES (Count-up + Bar Fill)
+  // ══════════════════════════════════════
+  function initUpcomingTiles() {
+    const tiles = document.querySelectorAll('.upcoming-reveal');
+
+    if (prefersReducedMotion) {
+      tiles.forEach(tile => {
+        tile.classList.add('upcoming-reveal--visible');
+        const num = tile.querySelector('[data-count-to]');
+        if (num) num.textContent = num.dataset.countTo;
+        const bar = tile.querySelector('[data-fill-to]');
+        if (bar) bar.style.width = bar.dataset.fillTo + '%';
+      });
+      return;
+    }
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function animateCountUp(el, target, duration) {
+      const start = performance.now();
+      function tick(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = easeOutCubic(progress);
+        el.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    const upcomingObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const tile = entry.target;
+          const index = parseInt(tile.dataset.tileIndex) || 0;
+          const delay = index * 120;
+
+          setTimeout(() => {
+            tile.classList.add('upcoming-reveal--visible');
+
+            const numEl = tile.querySelector('[data-count-to]');
+            if (numEl) {
+              const target = parseInt(numEl.dataset.countTo);
+              animateCountUp(numEl, target, 1100);
+            }
+
+            const barEl = tile.querySelector('[data-fill-to]');
+            if (barEl) {
+              setTimeout(() => {
+                barEl.style.width = barEl.dataset.fillTo + '%';
+              }, 200);
+            }
+          }, delay);
+
+          upcomingObserver.unobserve(tile);
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -30px 0px' }
+    );
+
+    tiles.forEach(tile => upcomingObserver.observe(tile));
+  }
+
+  // ══════════════════════════════════════
+  // 8.9 RIDER REVEAL SYSTEM
+  // ══════════════════════════════════════
+  function initRiderReveal() {
+    const riderElements = document.querySelectorAll('.rider-reveal');
+
+    if (prefersReducedMotion) {
+      riderElements.forEach(el => el.classList.add('rider-reveal--visible'));
+      return;
+    }
+
+    const riderObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          const el = entry.target;
+          const type = el.dataset.rider;
+
+          if (type === 'badge') {
+            el.classList.add('rider-reveal--visible');
+          } else if (type === 'title') {
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 100);
+          } else if (type === 'line') {
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 200);
+          } else if (type === 'intro') {
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 300);
+          } else if (type === 'card') {
+            const index = parseInt(el.dataset.riderIndex) || 0;
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 400 + (index * 120));
+          } else if (type === 'footer') {
+            setTimeout(() => el.classList.add('rider-reveal--visible'), 700);
+          }
+
+          riderObserver.unobserve(el);
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    riderElements.forEach(el => riderObserver.observe(el));
+  }
+
+  // ══════════════════════════════════════
   // INIT
   // ══════════════════════════════════════
   document.addEventListener('DOMContentLoaded', () => {
     initHeroAnimation();
     initHeroParallax();
     initScrollReveal();
+    initEditorialReveal();
+    initUpcomingTiles();
+    initRiderReveal();
     initHeaderScroll();
     initSmoothScroll();
     initScrollProgress();
