@@ -1,0 +1,100 @@
+/* =========================================
+   BASE STYLES — Axl Lake EPK
+   Estilos globales, body, tipografía, grain
+   ========================================= */
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── Grain Texture Overlay ── */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/textures/grain.png');
+  background-repeat: repeat;
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Typography Base ── */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 300;
+  line-height: 1.2;
+  font-feature-settings: 'kern', 'liga', 'calt';
+  text-rendering: optimizeLegibility;
+}
+
+p {
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--color-warm-gray);
+  color: var(--color-bg-primary);
+}
+
+::-moz-selection {
+  background: var(--color-warm-gray);
+  color: var(--color-bg-primary);
+}
+
+/* ── Scroll Progress Indicator ── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 1px;
+  width: 0%;
+  background: var(--color-warm-gray);
+  opacity: 0.4;
+  z-index: 9998;
+  transition: none;
+}
+
+/* ── Section Base ── */
+.section {
+  padding: var(--space-section) var(--space-md);
+  background-color: var(--color-bg-primary);
+}
+
+.section--alt {
+  background-color: var(--color-bg-secondary);
+}
+
+.section__container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Visually Hidden (for a11y) ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
